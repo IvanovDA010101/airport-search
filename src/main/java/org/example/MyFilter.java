@@ -1,0 +1,71 @@
+package org.example;
+
+import java.util.Scanner;
+import java.util.Stack;
+
+public class MyFilter {
+
+    public static boolean filterHardQuery(String[] row) {
+        String query = String.valueOf(MyRPN.filter);
+        String[] tokens = query.split(" ");
+        Stack<String> stack = new Stack<>();
+        StringBuilder result = new StringBuilder();
+        for (String token : tokens) {
+            if (MyRPN.isNumeric(token))
+                stack.push(token).replaceAll("\"", "");
+            else if (token.matches("[a-z]+")) {
+                stack.push(token);
+            }
+            if (token.equals("=") || token.equals(">") || token.equals("<") || token.equals("!")) {
+
+                result.append(filterSimpleQuery(row, stack.pop(),
+                        stack.pop(), token.charAt(0))).append(" ");
+            } else if (token.equals("&") || token.equals("|")) {
+                result.append(token).append(" ");
+            }
+        }
+        return evaluateBooleanExpression(String.valueOf(result).trim());
+    }
+
+    public static String filterSimpleQuery(String[] row, String comparisonElement, String columnNumber, Character sign) {
+        int column = Integer.parseInt(columnNumber) - 1;
+        switch (sign) {
+            case '=':
+                if (ColumnTypes.isNumericField(columnNumber)) {
+                    return String.valueOf(Double.parseDouble(comparisonElement) == Double.parseDouble(row[column]));
+                } else return String.valueOf(row[column].toLowerCase().equals(comparisonElement));
+            case '>':
+                if (ColumnTypes.isNumericField(columnNumber)) {
+                    return String.valueOf(Double.parseDouble(comparisonElement) < Double.parseDouble(row[column]));
+                } else return String.valueOf(row[column].length() > Integer.parseInt(comparisonElement));
+            case '<':
+                if (ColumnTypes.isNumericField(columnNumber)) {
+                    return String.valueOf(Double.parseDouble(comparisonElement) > Double.parseDouble(row[column]));
+                } else return String.valueOf(row[column].length() < Integer.parseInt(comparisonElement));
+            case '!':
+                if (ColumnTypes.isNumericField(columnNumber)) {
+                    return String.valueOf(Double.parseDouble(comparisonElement) != Double.parseDouble(row[column]));
+                }
+                return String.valueOf(!row[column].equals(comparisonElement));
+        }
+        return "false";
+    }
+
+    public static boolean evaluateBooleanExpression(String expression) {
+        Scanner scanner = new Scanner(expression);
+        //       scanner.useDelimiter("\\s*(&|\\|)\\s*"); // устанавливаем разделитель на символы "&" или "|"
+        boolean leftOperand = scanner.nextBoolean();
+        boolean result = leftOperand;
+        while (scanner.hasNext()) {
+            String operator = scanner.next();
+            boolean rightOperand = scanner.nextBoolean();
+            if (operator.equals("&")) {
+                result = result && rightOperand;
+            } else if (operator.equals("|")) {
+                result = result || rightOperand;
+            }
+        }
+        scanner.close();
+        return result;
+    }
+}

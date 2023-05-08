@@ -6,11 +6,7 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
 public class Searcher implements Searchible {
     HashMap<Character, HashMap<String, Pair>> dictionary = new HashMap<>();
@@ -77,6 +73,7 @@ public class Searcher implements Searchible {
                 String row = new String(bytes);
                 String[] rowData = row.replaceAll("\"", "").split(delimiterRow);
                 outputData.add(String.format("%s [%s]", rowData[1], row));
+                System.out.println(MyFilter.filterHardQuery(rowData));
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
