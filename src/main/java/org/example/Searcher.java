@@ -72,8 +72,8 @@ public class Searcher implements Searchible {
                 randomAccessFile.read(bytes);
                 String row = new String(bytes);
                 String[] rowData = row.replaceAll("\"", "").split(delimiterRow);
-                outputData.add(String.format("%s [%s]", rowData[1], row));
-                System.out.println(MyFilter.filterHardQuery(rowData));
+                if (MyFilter.filterHardQuery(rowData))
+                    outputData.add(String.format("%s [%s]", rowData[1], row));
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
