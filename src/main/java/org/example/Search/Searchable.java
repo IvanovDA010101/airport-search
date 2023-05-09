@@ -1,14 +1,16 @@
-package org.example;
+package org.example.Search;
+
+import org.example.Search.Pair;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 
-public interface Searchible {
+public interface Searchable {
 
     List<Pair> getLines(String startString);
 
     void filling() throws FileNotFoundException;
 
-    List<String> getData(String startString) throws IOException;
+    List<String> getData(String startString,String filter) throws IOException;
 }

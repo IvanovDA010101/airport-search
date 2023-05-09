@@ -1,7 +1,11 @@
 package org.example;
 
 
+import org.example.Filter.MyRPN;
+import org.example.Search.Searcher;
+
 import java.net.URISyntaxException;
+import java.util.List;
 import java.util.Scanner;
 
 public class App {
@@ -14,10 +18,16 @@ public class App {
             if (filter.equals("!quit")) {
                 break;
             }
-            MyRPN myRPN = new MyRPN(filter);
+            filter= MyRPN.reversePN(filter);
             System.out.println("Введите начало названия аэропорта");
             String startString = scanner.nextLine();
-            System.out.println(searcher.getData(startString).toString());
+            if (startString.equals("!quit")) {
+                break;
+            }
+            List<String> airports = searcher.getData(startString,filter);
+            for (String airport: airports) {
+                System.out.println(airport);
+            }
         }
     }
 }

@@ -1,13 +1,14 @@
-package org.example;
+package org.example.Filter;
+
+import org.example.Enums.ColumnTypes;
 
 import java.util.Scanner;
 import java.util.Stack;
 
 public class MyFilter {
 
-    public static boolean filterHardQuery(String[] row) {
-        String query = String.valueOf(MyRPN.filter);
-        String[] tokens = query.split(" ");
+    public static boolean filterHardQuery(String[] row,String filter) {
+        String[] tokens = filter.split(" ");
         Stack<String> stack = new Stack<>();
         StringBuilder result = new StringBuilder();
         for (String token : tokens) {
@@ -29,21 +30,22 @@ public class MyFilter {
 
     public static String filterSimpleQuery(String[] row, String comparisonElement, String columnNumber, Character sign) {
         int column = Integer.parseInt(columnNumber) - 1;
+        boolean isNumeric = ColumnTypes.isNumericField(columnNumber);
         switch (sign) {
             case '=':
-                if (ColumnTypes.isNumericField(columnNumber)) {
+                if (isNumeric) {
                     return String.valueOf(Double.parseDouble(comparisonElement) == Double.parseDouble(row[column]));
                 } else return String.valueOf(row[column].toLowerCase().equals(comparisonElement));
             case '>':
-                if (ColumnTypes.isNumericField(columnNumber)) {
+                if (isNumeric) {
                     return String.valueOf(Double.parseDouble(comparisonElement) < Double.parseDouble(row[column]));
                 } else return String.valueOf(row[column].length() > Integer.parseInt(comparisonElement));
             case '<':
-                if (ColumnTypes.isNumericField(columnNumber)) {
+                if (isNumeric) {
                     return String.valueOf(Double.parseDouble(comparisonElement) > Double.parseDouble(row[column]));
                 } else return String.valueOf(row[column].length() < Integer.parseInt(comparisonElement));
             case '!':
-                if (ColumnTypes.isNumericField(columnNumber)) {
+                if (isNumeric) {
                     return String.valueOf(Double.parseDouble(comparisonElement) != Double.parseDouble(row[column]));
                 }
                 return String.valueOf(!row[column].equals(comparisonElement));

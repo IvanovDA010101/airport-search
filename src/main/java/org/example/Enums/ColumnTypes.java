@@ -1,4 +1,4 @@
-package org.example;
+package org.example.Enums;
 
 public enum ColumnTypes {
     Numerical("1", "7", "8", "9");
@@ -9,11 +9,6 @@ public enum ColumnTypes {
         this.columns = columns;
     }
 
-    public String[] getColors() {
-        return columns;
-    }
-
-
     public static boolean isNumericField(String value) {
         for (String col : Numerical.columns) {
             if (col.equals(value))
@@ -21,12 +16,4 @@ public enum ColumnTypes {
         }
         return false;
     }
-// public static boolean isNumericField(String value) {
-//  for (int number : ColumnTypes.NUMERICAL.) {
-//   if (number.equals(value)) {
-//    return true;
-//   }
-//  }
-//  return false;
-// }
 }
