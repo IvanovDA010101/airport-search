@@ -27,7 +27,8 @@ public class MyRPN {
         Stack<String> stack = new Stack<>();
         StringBuilder output = new StringBuilder();
 
-        for (String token : tokens) {
+        for (int i = 0; i < tokens.length; i++) {
+            String token = tokens[i];
             if (isNumeric(token)) {
                 output.append(token).append(" ");
             } else if (token.equals("(")) {
@@ -37,12 +38,19 @@ public class MyRPN {
                     output.append(stack.pop()).append(" ");
                 }
                 stack.pop();
-            } else if (token.matches("[<>]=?|=")) {
+            } else if (token.matches("[<>!]=?|=")) {
+                if (token.equals("<") && tokens[i + 1].equals(">")) {
+                    token = "!";
+                    tokens[i + 1] = "#";
+                }
                 while (!stack.isEmpty() && stack.peek().matches("[<>]=?")) {
                     output.append(stack.pop()).append(" ");
                 }
                 stack.push(token);
             } else if (token.equals("&") || token.equals("|")) {
+                if (token.equals("|") && tokens[i + 1].equals("|")) {
+                    tokens[i + 1] = "#";
+                }
                 while (!stack.isEmpty() && (stack.peek().equals("&") || stack.peek().equals("|"))) {
                     output.append(stack.pop()).append(" ");
                 }

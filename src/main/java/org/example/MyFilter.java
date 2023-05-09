@@ -53,7 +53,6 @@ public class MyFilter {
 
     public static boolean evaluateBooleanExpression(String expression) {
         Scanner scanner = new Scanner(expression);
-        //       scanner.useDelimiter("\\s*(&|\\|)\\s*"); // устанавливаем разделитель на символы "&" или "|"
         boolean leftOperand = scanner.nextBoolean();
         boolean result = leftOperand;
         while (scanner.hasNext()) {
