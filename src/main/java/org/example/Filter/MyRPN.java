@@ -60,7 +60,8 @@ public class MyRPN {
                 output.append(stack.pop()).append(" ");
             }
         } catch (Exception e){
-            throw new RuntimeException(ErrorText.FILTER_PARSE_ERROR.getText());
+            System.out.println(ErrorText.FILTER_PARSE_ERROR.getText());
+            return "";
         }
         return String.valueOf(output);
     }

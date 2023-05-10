@@ -1,24 +1,27 @@
 package org.example.Search;
 
-import org.example.Enums.ErrorText;
-import org.example.Filter.MyFilter;
-import org.example.Search.Pair;
-import org.example.Search.Searchable;
-
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.net.URISyntaxException;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.example.Enums.ErrorText;
+import org.example.Filter.MyFilter;
 
 public class Searcher implements Searchable {
     HashMap<Character, HashMap<String, Pair>> dictionary = new HashMap<>();
     private final String DELIMITER = ",";
     private final String FILENAME = "airports.csv";
+
+    private String timeInfo;
 
     private final Path path;
 
@@ -78,8 +81,10 @@ public class Searcher implements Searchable {
                 randomAccessFile.read(bytes);
                 String row = new String(bytes);
                 String[] rowData = row.replaceAll("\"", "").split(DELIMITER);
-                if (MyFilter.filterHardQuery(rowData, filter))
-                    result.add(String.format("%s [%s]", rowData[1], row));
+                if (!filter.equals("")) {
+                    if (MyFilter.filterHardQuery(rowData, filter))
+                        result.add(String.format("%s [%s]", rowData[1], row));
+                } else result.add(String.format("%s [%s]", rowData[1], row));
             }
         } catch (IOException e) {
             throw new RuntimeException(ErrorText.FILE_READ_ERROR.getText());
@@ -91,9 +96,14 @@ public class Searcher implements Searchable {
         var startTime = System.nanoTime();
         List<Pair> lines = getLines(startString);
         List<String> outputData = getLine(lines,filter);
-        System.out.println(String.format("Количество найденных строк: %d, затрачено на поиск: %d мс.",
-                outputData.size(), (System.nanoTime() - startTime) / 1_000_000));
-
+        this.timeInfo=String.format("Количество найденных строк: %d, затрачено на поиск: %d мс.",
+                outputData.size(), (System.nanoTime() - startTime) / 1_000_000);
+        Collections.sort(outputData);
         return outputData;
+    }
+
+    @Override
+    public String getTimeInfo() {
+        return timeInfo;
     }
 }

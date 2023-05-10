@@ -1,9 +1,9 @@
 package org.example.Filter;
 
-import org.example.Enums.ColumnTypes;
-
 import java.util.Scanner;
 import java.util.Stack;
+
+import org.example.Enums.ColumnTypes;
 
 public class MyFilter {
 
@@ -18,7 +18,6 @@ public class MyFilter {
                 stack.push(token);
             }
             if (token.equals("=") || token.equals(">") || token.equals("<") || token.equals("!")) {
-
                 result.append(filterSimpleQuery(row, stack.pop(),
                         stack.pop(), token.charAt(0))).append(" ");
             } else if (token.equals("&") || token.equals("|")) {
