@@ -10,6 +10,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.net.URISyntaxException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.*;
 
@@ -33,7 +35,7 @@ public class Searcher implements Searchable {
     }
 
     public void filling() {
-        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(path.toFile()))) {
+        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(path.toFile(), StandardCharsets.UTF_8))) {
             String row = bufferedReader.readLine();
             int counter = 0;
             while (row != null) {
@@ -47,7 +49,7 @@ public class Searcher implements Searchable {
                 Pair pair = new Pair(counter, row.getBytes().length);
                 chunk.put(key, pair);
                 dictionary.put(c, chunk);
-                counter += row.getBytes().length + 1;
+                counter += row.getBytes().length+1;
                 row = bufferedReader.readLine();
             }
         } catch (IOException e) {
@@ -67,25 +69,28 @@ public class Searcher implements Searchable {
 
         return result;
     }
-
-    @Override
-    public List<String> getData(String startString,String filter) {
-        var startTime = System.nanoTime();
-        List<String> outputData = new ArrayList<>();
-        List<Pair> lines = getLines(startString);
-        try (RandomAccessFile randomAccessFile = new RandomAccessFile(path.toFile(), "r");) {
+    private List<String> getLine(List<Pair> lines,String filter) {
+        List<String> result = new ArrayList<>();
+        try (RandomAccessFile randomAccessFile = new RandomAccessFile(path.toFile(), "r")) {
             for (Pair line : lines) {
                 randomAccessFile.seek(line.getLengthBeforeRow());
                 byte[] bytes = new byte[line.getLengthOfRow()];
                 randomAccessFile.read(bytes);
                 String row = new String(bytes);
                 String[] rowData = row.replaceAll("\"", "").split(DELIMITER);
-                if (MyFilter.filterHardQuery(rowData,filter))
-                    outputData.add(String.format("%s [%s]", rowData[1], row));
+                if (MyFilter.filterHardQuery(rowData, filter))
+                    result.add(String.format("%s [%s]", rowData[1], row));
             }
         } catch (IOException e) {
             throw new RuntimeException(ErrorText.FILE_READ_ERROR.getText());
         }
+        return result;
+    }
+    @Override
+    public List<String> getData(String startString,String filter) {
+        var startTime = System.nanoTime();
+        List<Pair> lines = getLines(startString);
+        List<String> outputData = getLine(lines,filter);
         System.out.println(String.format("Количество найденных строк: %d, затрачено на поиск: %d мс.",
                 outputData.size(), (System.nanoTime() - startTime) / 1_000_000));
 

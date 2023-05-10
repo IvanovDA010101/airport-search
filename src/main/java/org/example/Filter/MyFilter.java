@@ -13,7 +13,7 @@ public class MyFilter {
         StringBuilder result = new StringBuilder();
         for (String token : tokens) {
             if (MyRPN.isNumeric(token))
-                stack.push(token).replaceAll("\"", "");
+                stack.push(token);
             else if (token.matches("[a-z]+")) {
                 stack.push(token);
             }
@@ -55,8 +55,7 @@ public class MyFilter {
 
     public static boolean evaluateBooleanExpression(String expression) {
         Scanner scanner = new Scanner(expression);
-        boolean leftOperand = scanner.nextBoolean();
-        boolean result = leftOperand;
+        boolean result = scanner.nextBoolean();
         while (scanner.hasNext()) {
             String operator = scanner.next();
             boolean rightOperand = scanner.nextBoolean();

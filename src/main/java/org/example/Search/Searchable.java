@@ -8,9 +8,5 @@ import java.util.List;
 
 public interface Searchable {
 
-    List<Pair> getLines(String startString);
-
-    void filling() throws FileNotFoundException;
-
-    List<String> getData(String startString,String filter) throws IOException;
+    List<String> getData(String startString,String filter);
 }
